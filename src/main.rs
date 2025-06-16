@@ -2,7 +2,6 @@ mod model;
 mod parser;
 mod fetcher;
 
-use model::Post;
 use parser::csv_parser::parse_posts;
 use parser::index_builder::{build_index_tree, write_index_html};
 use fetcher::downloader::download_and_save_post;
@@ -48,20 +47,25 @@ async fn main() -> anyhow::Result<()> {
 
     use futures::stream::{FuturesUnordered, StreamExt};
     let mut futures = FuturesUnordered::new();
-    for post in posts.iter() {
-        let p = post.clone();
+    for post in posts.iter().cloned() {
         let client = client.clone();
         let outputs_dir = outputs_dir.clone();
         while futures.len() >= args.concurrency {
-            futures.next().await;
-        }
-        futures.push(tokio::spawn(async move {
-            if let Err(e) = download_and_save_post(&p, &outputs_dir, &client).await {
-                eprintln!("Error downloading {}: {}", &p.url, e);
+            if let Some(result) = futures.next().await {
+                if let Err(e) = result {
+                    eprintln!("Error downloading: {}", e);
+                }
             }
-        }));
+        }
+        futures.push(async move {
+            download_and_save_post(&post, &outputs_dir, &client).await
+        });
     }
-    while futures.next().await.is_some() {}
+    while let Some(result) = futures.next().await {
+        if let Err(e) = result {
+            eprintln!("Error downloading: {}", e);
+        }
+    }
 
     // 生成index.html
     let tree = build_index_tree(&posts);

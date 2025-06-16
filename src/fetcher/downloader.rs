@@ -1,8 +1,11 @@
 use crate::model::Post;
 use reqwest::Client;
+use std::path::Path;
 use std::fs;
-use std::path::{Path, PathBuf};
+use crate::fetcher::image::process_images;
+use crate::fetcher::video::process_videos;
 
+/// 下载网页并处理本地化资源（图片、视频）
 pub async fn download_and_save_post(
     post: &Post,
     outputs_dir: &Path,
@@ -19,9 +22,14 @@ pub async fn download_and_save_post(
         fs::create_dir_all(parent)?;
     }
     let resp = client.get(url).send().await?;
-    let content = resp.text().await?;
+    let mut content = resp.text().await?;
 
-    // 可加图片本地化功能
+    // 图片本地化
+    content = process_images(&content, url, outputs_dir, client).await?;
+
+    // 视频本地化
+    content = process_videos(&content, url, outputs_dir, client).await?;
+
     fs::write(&html_path, content)?;
     println!("Downloaded: {} -> {}", url, html_path.display());
     Ok(())

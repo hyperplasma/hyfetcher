@@ -1,5 +1,5 @@
-use crate::model::{Post, sanitize_filename};
-use std::path::{Path, PathBuf};
+use crate::model::Post;
+use std::path::Path;
 use walkdir::WalkDir;
 
 pub fn parse_posts(data_dir: &Path) -> Vec<Post> {
