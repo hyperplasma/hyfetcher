@@ -1,0 +1,28 @@
+url,title
+https://www.runoob.com/rust/rust-tutorial.html,Rust 教程
+https://www.runoob.com/rust/rust-setup.html,Rust 环境搭建
+https://www.runoob.com/rust/cargo-tutorial.html,Cargo 教程
+https://www.runoob.com/rust/rust-println.html,Rust 输出到命令行
+https://www.runoob.com/rust/rust-basic-syntax.html,Rust 基础语法
+https://www.runoob.com/rust/rust-data-types.html,Rust 数据类型
+https://www.runoob.com/rust/rust-comments.html,Rust 注释
+https://www.runoob.com/rust/rust-function.html,Rust 函数
+https://www.runoob.com/rust/rust-conditions.html,Rust 条件语句
+https://www.runoob.com/rust/rust-loop.html,Rust 循环
+https://www.runoob.com/rust/rust-iter.html,Rust 迭代器
+https://www.runoob.com/rust/rust-closure.html,Rust 闭包
+https://www.runoob.com/rust/rust-ownership.html,Rust 所有权
+https://www.runoob.com/rust/rust-slice.html,Rust Slice（切片）类型
+https://www.runoob.com/rust/rust-struct.html,Rust 结构体
+https://www.runoob.com/rust/rust-enum.html,Rust 枚举类
+https://www.runoob.com/rust/rust-project-management.html,Rust 组织管理
+https://www.runoob.com/rust/rust-error-handle.html,Rust 错误处理
+https://www.runoob.com/rust/rust-generics.html,Rust 泛型与特性
+https://www.runoob.com/rust/rust-lifetime.html,Rust 生命周期
+https://www.runoob.com/rust/rust-file-io.html,Rust 文件与 IO
+https://www.runoob.com/rust/rust-collection-string.html,Rust 集合与字符串
+https://www.runoob.com/rust/rust-object.html,Rust 面向对象
+https://www.runoob.com/rust/rust-concurrency.html,Rust 并发编程
+https://www.runoob.com/rust/rust-macros.html,Rust 宏
+https://www.runoob.com/rust/rust-smart-pointers.html,Rust 智能指针
+https://www.runoob.com/rust/rust-async-await.html,Rust 异步编程 async/await
