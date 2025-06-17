@@ -1,0 +1,126 @@
+name: Build and Release Binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "v0.1.1"
+        required: true
+      release_name:
+        description: "HyFetcher"
+        required: false
+      body:
+        description: "A fast and simple website fetcher by Hyperplasma"
+        required: false
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-macos-amd64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        run: rustup target add x86_64-apple-darwin
+      - name: Build for macOS x86_64
+        run: cargo build --release --target x86_64-apple-darwin
+      - name: Package binary
+        run: |
+          mkdir -p release-bin
+          cp target/x86_64-apple-darwin/release/hyfetcher release-bin/hyfetcher-macos-amd64
+          tar -czvf release-bin/hyfetcher-macos-amd64.tar.gz -C release-bin hyfetcher-macos-amd64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hyfetcher-macos-amd64
+          path: release-bin/hyfetcher-macos-amd64.tar.gz
+
+  build-macos-arm64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        run: rustup target add aarch64-apple-darwin
+      - name: Build for macOS arm64
+        run: cargo build --release --target aarch64-apple-darwin
+      - name: Package binary
+        run: |
+          mkdir -p release-bin
+          cp target/aarch64-apple-darwin/release/hyfetcher release-bin/hyfetcher-macos-arm64
+          tar -czvf release-bin/hyfetcher-macos-arm64.tar.gz -C release-bin hyfetcher-macos-arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hyfetcher-macos-arm64
+          path: release-bin/hyfetcher-macos-arm64.tar.gz
+
+  build-linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        run: rustup target add x86_64-unknown-linux-gnu
+      - name: Build for Linux x86_64
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+      - name: Package binary
+        run: |
+          mkdir -p release-bin
+          cp target/x86_64-unknown-linux-gnu/release/hyfetcher release-bin/hyfetcher-linux-amd64
+          tar -czvf release-bin/hyfetcher-linux-amd64.tar.gz -C release-bin hyfetcher-linux-amd64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hyfetcher-linux-amd64
+          path: release-bin/hyfetcher-linux-amd64.tar.gz
+
+  build-windows-amd64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        run: rustup target add x86_64-pc-windows-gnu
+      - name: Build for Windows x86_64
+        run: cargo build --release --target x86_64-pc-windows-gnu
+      - name: Package binary
+        run: |
+          mkdir release-bin
+          copy target\x86_64-pc-windows-gnu\release\hyfetcher.exe release-bin\hyfetcher-windows-amd64.exe
+          powershell Compress-Archive -Path release-bin\hyfetcher-windows-amd64.exe -DestinationPath release-bin\hyfetcher-windows-amd64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hyfetcher-windows-amd64
+          path: release-bin/hyfetcher-windows-amd64.zip
+
+  release:
+    needs:
+      - build-macos-amd64
+      - build-macos-arm64
+      - build-linux-amd64
+      - build-windows-amd64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Display files
+        run: ls -R dist
+      - name: Rename artifacts for release
+        run: |
+          mkdir release
+          mv dist/hyfetcher-macos-amd64/hyfetcher-macos-amd64.tar.gz release/
+          mv dist/hyfetcher-macos-arm64/hyfetcher-macos-arm64.tar.gz release/
+          mv dist/hyfetcher-linux-amd64/hyfetcher-linux-amd64.tar.gz release/
+          mv dist/hyfetcher-windows-amd64/hyfetcher-windows-amd64.zip release/
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          name: ${{ github.event.inputs.release_name || github.ref_name }}
+          body: ${{ github.event.inputs.body || '' }}
+          draft: false
+          prerelease: false
+          files: |
+            release/hyfetcher-macos-amd64.tar.gz
+            release/hyfetcher-macos-arm64.tar.gz
+            release/hyfetcher-linux-amd64.tar.gz
+            release/hyfetcher-windows-amd64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
