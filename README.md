@@ -30,6 +30,7 @@ hyfetcher/
 │   │   └── ...
 │   └── ...
 ├── outputs/
+│   ├── index.html
 │   ├── <category>
 │   │   ├── <sub-category>
 │   │   │   ├── hypress
