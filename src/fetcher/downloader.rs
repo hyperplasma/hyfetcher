@@ -24,11 +24,14 @@ pub async fn download_and_save_post(
     let resp = client.get(url).send().await?;
     let mut content = resp.text().await?;
 
+    // 获取 HTML 文件实际目录（用于 images 存放）
+    let html_dir = html_path.parent().unwrap_or(outputs_dir);
+
     // 图片本地化
-    content = process_images(&content, url, outputs_dir, client).await?;
+    content = process_images(&content, url, html_dir, client).await?;
 
     // 视频本地化
-    content = process_videos(&content, url, outputs_dir, client).await?;
+    content = process_videos(&content, url, html_dir, client).await?;
 
     fs::write(&html_path, content)?;
     println!("Downloaded: {} -> {}", url, html_path.display());

@@ -8,11 +8,11 @@ use tokio::io::AsyncWriteExt;
 pub async fn process_videos(
     html: &str,
     page_url: &str,
-    outputs_dir: &Path,
+    html_file_dir: &Path,
     client: &Client,
 ) -> anyhow::Result<String> {
     let base_url = Url::parse(page_url).ok();
-    let document = Html::parse_document(html);  // no need to mut
+    let document = Html::parse_document(html);
     let video_selector = Selector::parse("video").unwrap();
     let source_selector = Selector::parse("source").unwrap();
 
@@ -34,7 +34,9 @@ pub async fn process_videos(
                     if f.is_empty() { None } else { Some(f) }
                 }).unwrap_or("video.mp4");
 
-                let local_path = outputs_dir.join("assets").join("videos").join(filename);
+                // 本地路径为 html_file_dir/videos/filename
+                let local_video_dir = html_file_dir.join("videos");
+                let local_path = local_video_dir.join(filename);
 
                 if !local_path.exists() {
                     if let Some(parent) = local_path.parent() {
@@ -57,7 +59,7 @@ pub async fn process_videos(
                         }
                     }
                 }
-                let rel_path = format!("assets/videos/{}", filename);
+                let rel_path = format!("videos/{}", filename);
                 replacements.push((format!("src=\"{}\"", src), format!("src=\"{}\"", rel_path)));
             }
         }
@@ -79,7 +81,8 @@ pub async fn process_videos(
                     if f.is_empty() { None } else { Some(f) }
                 }).unwrap_or("video.mp4");
 
-                let local_path = outputs_dir.join("assets").join("videos").join(filename);
+                let local_video_dir = html_file_dir.join("videos");
+                let local_path = local_video_dir.join(filename);
 
                 if !local_path.exists() {
                     if let Some(parent) = local_path.parent() {
@@ -102,7 +105,7 @@ pub async fn process_videos(
                         }
                     }
                 }
-                let rel_path = format!("assets/videos/{}", filename);
+                let rel_path = format!("videos/{}", filename);
                 replacements.push((format!("src=\"{}\"", src), format!("src=\"{}\"", rel_path)));
             }
         }

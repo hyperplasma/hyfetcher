@@ -8,18 +8,17 @@ use tokio::io::AsyncWriteExt;
 pub async fn process_images(
     html: &str,
     page_url: &str,
-    outputs_dir: &Path,
+    html_file_dir: &Path,  // 新参数，传入HTML文件所在目录
     client: &Client,
 ) -> anyhow::Result<String> {
     let base_url = Url::parse(page_url).ok();
-    let document = Html::parse_document(html);  // no need to mut
+    let document = Html::parse_document(html);
     let img_selector = Selector::parse("img").unwrap();
 
     let mut replacements = vec![];
 
     for img in document.select(&img_selector) {
         if let Some(src) = img.value().attr("src") {
-            // 只处理http/https图片
             if src.starts_with("http://") || src.starts_with("https://") || base_url.is_some() {
                 let img_url = if src.starts_with("http") {
                     src.to_string()
@@ -34,7 +33,9 @@ pub async fn process_images(
                     if f.is_empty() { None } else { Some(f) }
                 }).unwrap_or("image.jpg");
 
-                let local_path = outputs_dir.join("assets").join("images").join(filename);
+                // 图片存于 html_file_dir/images/filename
+                let local_img_dir = html_file_dir.join("images");
+                let local_path = local_img_dir.join(filename);
 
                 // 并发下载
                 if !local_path.exists() {
@@ -55,8 +56,8 @@ pub async fn process_images(
                     }
                 }
 
-                // HTML中用相对路径替换
-                let rel_path = format!("assets/images/{}", filename);
+                // HTML中用相对路径替换（与html文件同级的images/filename）
+                let rel_path = format!("images/{}", filename);
                 replacements.push((src.to_string(), rel_path));
             }
         }
