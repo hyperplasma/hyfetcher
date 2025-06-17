@@ -99,3 +99,7 @@ If you downloaded the executable directly, run in its directory:
 ### 4. Index Page
 
 The program automatically generates an `index.html` in the output directory, which can be opened directly in a browser for quick access to all downloaded web
+
+## License
+
+[MIT](LICENSE)
