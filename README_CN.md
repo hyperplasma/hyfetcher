@@ -45,7 +45,7 @@ hyfetcher/
 
 - 需准备一个树形结构的输入目录（如 `data/`），各级目录对应 `index.html` 中的各级分类，叶节点目录中包含爬取目标的描述文件（CSV），格式参考  `model.rs`，必填字段有 `url`、`title`。
 - 每个网页将保存为本地 HTML，输出目录（如 `outputs/`）中分类层级关系（目录结构结构）保持与输入目录中相同的结构。
-- 图片和视频等资源自动下载到本地 `outputs/assets/` 目录。
+- 图片和视频等资源自动下载到本地 `outputs/<category>/<sub-category>/images/` 或 `outputs/<category>/<sub-category>/videos/` 目录。
 
 ## 各平台使用说明
 

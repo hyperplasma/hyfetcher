@@ -45,7 +45,7 @@ hyfetcher/
 
 - You need to prepare a tree-structured input directory (such as `data/`). Each level of the directory corresponds to a category in the generated `index.html`. The leaf directories contain CSV files describing the crawl targets. The CSV format is defined in `model.rs` and must include at least the fields `url` and `title`.
 - Each web page will be saved as a local HTML file. The output directory (such as `outputs/`) will preserve the same hierarchical structure as the input directory.
-- Images, videos, and other resources are automatically downloaded to the local `outputs/assets/` directory.
+- Images, videos, and other resources are automatically downloaded to the local `outputs/<category>/<sub-category>/images/` or `outputs/<category>/<sub-category>/videos/` directories.
 
 ## Usage on Different Platforms
 
