@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "v0.1.2"
+        description: "v0.1.2.1"
         required: true
       release_name:
         description: "HyFetcher"
