@@ -12,7 +12,7 @@ pub async fn process_images(
     client: &Client,
 ) -> anyhow::Result<String> {
     let base_url = Url::parse(page_url).ok();
-    let mut document = Html::parse_document(html);
+    let document = Html::parse_document(html);  // no need to mut
     let img_selector = Selector::parse("img").unwrap();
 
     let mut replacements = vec![];

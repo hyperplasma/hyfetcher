@@ -12,7 +12,7 @@ pub async fn process_videos(
     client: &Client,
 ) -> anyhow::Result<String> {
     let base_url = Url::parse(page_url).ok();
-    let mut document = Html::parse_document(html);
+    let document = Html::parse_document(html);  // no need to mut
     let video_selector = Selector::parse("video").unwrap();
     let source_selector = Selector::parse("source").unwrap();
 

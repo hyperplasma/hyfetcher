@@ -9,12 +9,12 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-/// Rust offline website/article downloader and indexer
+/// Rust offline website downloader and indexer
 #[derive(Parser, Debug)]
 #[command(
     author = "Akira37",
     version = "0.1.0",
-    about = "Rust offline website/article downloader and indexer"
+    about = "Rust offline website downloader and indexer"
 )]
 struct Args {
     /// Data input directory

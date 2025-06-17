@@ -1,83 +1,16 @@
 # HyFetcher
 
-**HyFetcher** 是一个用 Rust 编写的高效离线网页/文章批量下载与索引生成工具，支持并发下载网页、自动本地化图片和视频等资源，并生成可浏览的 `index.html` 索引页。
+**HyFetcher** is a high-performance offline web page/article batch downloader and index generator written in Rust. It supports concurrent downloading of web pages, automatic localization of images and videos, and generates a browsable `index.html` index page.
 
-## 特性
+## Features
 
-- 🚀 多线程高并发下载，性能远超 Python 版本
-- 🖼️ 自动本地化网页中的图片和视频资源
-- 🗂️ 自动生成可浏览的索引页
-- 🛠️ 命令行参数自由指定数据目录、输出目录、并发数等
-- 📦 简洁易用，适合个人知识管理、网页归档等场景
+- 🚀 Multi-threaded concurrent downloads, significantly outperforming the [Python version](https://github.com/hyperplasma/hyplusite-exporter)
+- 🖼️ Automatic localization of images and video resources from web pages
+- 🗂️ Automatic generation of browsable index pages
+- 🛠️ Configurable command-line parameters for data directory, output directory, concurrency, etc.
+- 📦 Simple to use, perfect for personal knowledge management and web archiving
 
-## 使用方法
-
-### 1. 编译
-
-请确保你已安装 Rust 工具链。然后在项目目录下编译：
-
-```sh
-cargo build --release
-```
-
-可执行文件位于 `target/release/hyfetcher`。
-
----
-
-### 2. 运行
-
-```sh
-./target/release/hyfetcher [OPTIONS]
-```
-
-**可用参数**：
-
-- `-d, --data_dir <DATA_DIR>`：数据输入目录，默认 `data`
-- `-o, --outputs_dir <OUTPUTS_DIR>`：输出目录，默认 `outputs`
-- `-c, --concurrency <CONCURRENCY>`：并发任务数，默认 8
-
-**示例**：
-
-```sh
-./target/release/hyfetcher -d data -o outputs -c 16
-```
-
----
-
-### 3. 数据格式
-
-- 需准备一个输入目录（如 `data/`），其中包含爬取目标的描述文件（如 CSV），格式参考 `model.rs`。
-- 每个网页将保存为本地 HTML，图片和视频等资源自动下载到本地 `outputs/assets/` 目录。
-
----
-
-### 4. 索引页
-
-程序会在输出目录下自动生成 `index.html`，可直接用浏览器打开，快速查阅已下载的所有网页。
-
----
-
-## 性能对比
-
-Rust 版性能远超 [Python 版](https://github.com/hyperplasma/hyplusite-exporter)（多达 10 倍及以上）：
-
-- Python 版：下载 80 个网页需约 7 分钟
-- Rust 版：下载 116 个网页仅需 4 分钟
-
----
-
-## 依赖
-
-- [tokio](https://crates.io/crates/tokio)
-- [reqwest](https://crates.io/crates/reqwest)
-- [scraper](https://crates.io/crates/scraper)
-- [clap](https://crates.io/crates/clap)
-- [anyhow](https://crates.io/crates/anyhow)
-- 详见 `Cargo.toml`
-
----
-
-## 目录结构
+## Data and Directory Structure
 
 ```
 hyfetcher/
@@ -85,24 +18,84 @@ hyfetcher/
 │   ├── main.rs
 │   ├── model.rs
 │   ├── parser/
+│   │   └── ...
 │   ├── fetcher/
-│   │   ├── downloader.rs
-│   │   ├── image.rs
-│   │   └── video.rs
+│   │   └── ...
+│   └── ...
 ├── data/
+│   ├── <category>
+│   │   ├── <sub-category>
+│   │   │   ├── hypress.csv
+│   │   │   └── ...
+│   │   └── ...
+│   └── ...
 ├── outputs/
+│   ├── <category>
+│   │   ├── <sub-category>
+│   │   │   ├── hypress
+│   │   │   │   ├── example-page.html
+│   │   │   │   └── ...
+│   │   │   └── ...
+│   │   └── ...
+│   └── ...
 ├── Cargo.toml
-└── README.md
+├── README.md
+└── ...
 ```
 
----
+- Prepare a tree-structured input directory (e.g., `data/`), where directories correspond to categories in `index.html`. Leaf node directories contain CSV description files of crawling targets, format specified in `model.rs`, with required fields `url` and `title`.
+- Each webpage is saved as local HTML, with the output directory (e.g., `outputs/`) maintaining the same category hierarchy (directory structure) as the input directory.
+- Images, videos, and other resources are automatically downloaded to the local `outputs/assets/` directory.
 
-## 贡献
+## Dependencies
 
-欢迎 PR 及建议！如遇问题请提 [Issue](https://github.com/你的用户名/hyfetcher/issues)。
+- [tokio](https://crates.io/crates/tokio)
+- [reqwest](https://crates.io/crates/reqwest)
+- [scraper](https://crates.io/crates/scraper)
+- [clap](https://crates.io/crates/clap)
+- [anyhow](https://crates.io/crates/anyhow)
+- See `Cargo.toml` for details
 
----
+## Usage
 
-## License
+### 1. Build
 
-[MIT](LICENSE)
+Ensure you have the Rust toolchain installed. Then compile in the project directory:
+
+```sh
+cargo build --release
+```
+
+The executable will be located at `target/release/hyfetcher`.
+
+Alternatively, download the executable directly.
+
+### 2. Run
+
+Execute in the project root directory:
+
+```sh
+./target/release/hyfetcher [OPTIONS]
+```
+
+If you downloaded the executable directly, run in its directory:
+
+```sh
+./hyfetcher [OPTIONS]
+```
+
+**Available Options**:
+
+- `-d, --data_dir <DATA_DIR>`: Input data directory, default: `data`
+- `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default: `outputs`
+- `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default: 8
+
+**Example**:
+
+```sh
+./target/release/hyfetcher -d data -o outputs -c 16
+```
+
+### 4. Index Page
+
+The program automatically generates an `index.html` in the output directory, which can be opened directly in a browser for quick access to all downloaded web
