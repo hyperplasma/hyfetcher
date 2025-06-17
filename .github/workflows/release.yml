@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "v0.1.2.1"
+        description: "tag_name (e.g., v1.0.0)"
         required: true
       release_name:
-        description: "HyFetcher"
+        description: "Release Name (e.g., v1.0.0)"
         required: false
       body:
-        description: "A fast and simple website fetcher by Hyperplasma"
+        description: "Release Body (e.g., 'Initial release')"
         required: false
   push:
     tags:
