@@ -48,6 +48,22 @@ hyfetcher/
 - Each web page will be saved as a local HTML file. The output directory (such as `outputs/`) will preserve the same hierarchical structure as the input directory.
 - Images, videos, and other resources are automatically downloaded to the local `outputs/<category>/<sub-category>/images/` or `outputs/<category>/<sub-category>/videos/` directories.
 
+The program will automatically generate `index.html` in the output directory. You can open it directly in your browser to quickly browse all downloaded web pages.
+
+## Available options
+
+You can use the following command-line options to configure HyFetcher:
+
+- `-d, --data_dir <DATA_DIR>`: Input data directory, default is `data`
+- `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default is `outputs`
+- `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default is 8
+
+Example:
+
+```sh
+./target/release/hyfetcher -d data -o outputs -c 16
+```
+
 ## Usage on Different Platforms
 
 HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can download them from the [Releases](https://github.com/hyperplasma/hyfetcher/releases) page. No local compilation is required—just download and run.
@@ -60,7 +76,7 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 4. In the command line (cmd or PowerShell), run:
 
     ```sh
-    .\hyfetcher-windows-amd64.exe -d data -o outputs -c 8
+    .\hyfetcher-windows-amd64.exe -d data -o outputs
     ```
 
 5. After the program finishes, open `outputs/index.html` in your browser to view the downloaded web pages.
@@ -78,7 +94,7 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 4. Run in Terminal:
 
     ```sh
-    ./hyfetcher-macos-amd64 -d data -o outputs -c 8
+    ./hyfetcher-macos-amd64 -d data -o outputs
     ```
 
 5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
@@ -96,7 +112,7 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 4. Run in Terminal:
 
     ```sh
-    ./hyfetcher-linux-amd64 -d data -o outputs -c 8
+    ./hyfetcher-linux-amd64 -d data -o outputs
     ```
 
 5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
@@ -130,21 +146,7 @@ In the project root directory, run:
 ./target/release/hyfetcher [OPTIONS]
 ```
 
-**Available options:**
-
-- `-d, --data_dir <DATA_DIR>`: Input data directory, default is `data`
-- `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default is `outputs`
-- `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default is 8
-
-**Example:**
-
-```sh
-./target/release/hyfetcher -d data -o outputs -c 16
-```
-
-### Index Page
-
-The program will automatically generate `index.html` in the output directory. You can open it directly in your browser to quickly browse all downloaded web pages.
+See above for available options.
 
 ## License
 

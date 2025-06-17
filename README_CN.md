@@ -48,6 +48,22 @@ hyfetcher/
 - 每个网页将保存为本地 HTML，输出目录（如 `outputs/`）中分类层级关系（目录结构结构）保持与输入目录中相同的结构。
 - 图片和视频等资源自动下载到本地 `outputs/<category>/<sub-category>/images/` 或 `outputs/<category>/<sub-category>/videos/` 目录。
 
+程序会在输出目录下自动生成 `index.html`，可直接用浏览器打开，快速查阅已下载的所有网页。
+
+## 可用参数
+
+你可以使用以下命令行参数来配置 HyFetcher：【】
+
+- `-d, --data_dir <DATA_DIR>`：数据输入目录，默认 `data`
+- `-o, --outputs_dir <OUTPUTS_DIR>`：输出目录，默认 `outputs`
+- `-c, --concurrency <CONCURRENCY>`：并发任务数，默认 8
+
+示例：
+
+```sh
+./target/release/hyfetcher -d data -o outputs -c 16
+```
+
 ## 各平台使用说明
 
 HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均可在 [Releases](https://github.com/hyperplasma/hyfetcher/releases) 页面下载，无需本地编译环境，下载后即可直接运行。
@@ -60,7 +76,7 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 4. 在命令行（cmd 或 PowerShell）中运行：
 
     ```sh
-    .\hyfetcher-windows-amd64.exe -d data -o outputs -c 8
+    .\hyfetcher-windows-amd64.exe -d data -o outputs
     ```
 
 5. 程序结束后，打开 `outputs/index.html` 即可用浏览器查看已下载网页。
@@ -78,7 +94,7 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 4. 在终端运行：
 
     ```sh
-    ./hyfetcher-macos-amd64 -d data -o outputs -c 8
+    ./hyfetcher-macos-amd64 -d data -o outputs
     ```
 
 5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
@@ -96,7 +112,7 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 4. 在终端运行：
 
     ```sh
-    ./hyfetcher-linux-amd64 -d data -o outputs -c 8
+    ./hyfetcher-linux-amd64 -d data -o outputs
     ```
 
 5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
@@ -130,22 +146,6 @@ cargo build --release
 ```sh
 ./target/release/hyfetcher [OPTIONS]
 ```
-
-**可用参数**：
-
-- `-d, --data_dir <DATA_DIR>`：数据输入目录，默认 `data`
-- `-o, --outputs_dir <OUTPUTS_DIR>`：输出目录，默认 `outputs`
-- `-c, --concurrency <CONCURRENCY>`：并发任务数，默认 8
-
-**示例**：
-
-```sh
-./target/release/hyfetcher -d data -o outputs -c 16
-```
-
-### 索引页
-
-程序会在输出目录下自动生成 `index.html`，可直接用浏览器打开，快速查阅已下载的所有网页。
 
 ## License
 
