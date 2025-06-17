@@ -4,7 +4,7 @@
 
 ## Features
 
-- 🚀 Multi-threaded concurrent downloads, significantly outperforming the [Python version](https://github.com/hyperplasma/hyplusite-exporter)
+- 🚀 Multi-threaded concurrent downloads, significantly outperforming [the Python version](https://github.com/hyperplasma/hyplusite-exporter)
 - 🖼️ Automatic localization of images and video resources from web pages
 - 🗂️ Automatic generation of browsable index pages
 - 🛠️ Configurable command-line parameters for data directory, output directory, concurrency, etc.
