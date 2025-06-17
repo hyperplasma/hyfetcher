@@ -1,14 +1,14 @@
 # HyFetcher
 
-**HyFetcher** is a high-performance offline web page/article batch downloader and index generator written in Rust. It supports concurrent downloading of web pages, automatic localization of images and videos, and generates a browsable `index.html` index page.
+**HyFetcher** is an efficient offline website/article batch downloader and index generator written in Rust. It supports concurrent downloading of web pages, automatic localization of images and videos, and generates a browsable `index.html` index page.
 
 ## Features
 
-- 🚀 Multi-threaded concurrent downloads, significantly outperforming [the Python version](https://github.com/hyperplasma/hyplusite-exporter)
-- 🖼️ Automatic localization of images and video resources from web pages
-- 🗂️ Automatic generation of browsable index pages
-- 🛠️ Configurable command-line parameters for data directory, output directory, concurrency, etc.
-- 📦 Simple to use, perfect for personal knowledge management and web archiving
+- 🚀 Multi-threaded high-concurrency downloading, significantly faster than [the Python version](https://github.com/hyperplasma/hyplusite-exporter)
+- 🖼️ Automatically localizes images and videos in web pages
+- 🗂️ Automatically generates a browsable index page
+- 🛠️ Flexible command-line arguments to specify data directory, output directory, concurrency, etc.
+- 📦 Simple and easy to use, suitable for personal knowledge management, web archiving, and similar scenarios
 
 ## Data and Directory Structure
 
@@ -43,9 +43,62 @@ hyfetcher/
 └── ...
 ```
 
-- Prepare a tree-structured input directory (e.g., `data/`), where directories correspond to categories in `index.html`. Leaf node directories contain CSV description files of crawling targets, format specified in `model.rs`, with required fields `url` and `title`.
-- Each webpage is saved as local HTML, with the output directory (e.g., `outputs/`) maintaining the same category hierarchy (directory structure) as the input directory.
+- You need to prepare a tree-structured input directory (such as `data/`). Each level of the directory corresponds to a category in the generated `index.html`. The leaf directories contain CSV files describing the crawl targets. The CSV format is defined in `model.rs` and must include at least the fields `url` and `title`.
+- Each web page will be saved as a local HTML file. The output directory (such as `outputs/`) will preserve the same hierarchical structure as the input directory.
 - Images, videos, and other resources are automatically downloaded to the local `outputs/assets/` directory.
+
+## Usage on Different Platforms
+
+HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can download them from the [Releases](https://github.com/hyperplasma/hyfetcher/releases) page. No local compilation is required—just download and run.
+
+### Windows
+
+1. Go to the [Releases](https://github.com/hyperplasma/hyfetcher/releases) page and download the latest `hyfetcher-windows-amd64.zip`.
+2. Extract it to obtain `hyfetcher-windows-amd64.exe`.
+3. Place your data directory (such as `data`) and output directory (such as `outputs`) in the same directory or specify their paths.
+4. In the command line (cmd or PowerShell), run:
+
+    ```sh
+    .\hyfetcher-windows-amd64.exe -d data -o outputs -c 8
+    ```
+
+5. After the program finishes, open `outputs/index.html` in your browser to view the downloaded web pages.
+
+### macOS
+
+1. Go to the [Releases](https://github.com/hyperplasma/hyfetcher/releases) page and download the latest `hyfetcher-macos-amd64.tar.gz` (for Intel chips) or `hyfetcher-macos-arm64.tar.gz` (for Apple Silicon).
+2. Extract it to obtain the executable (such as `hyfetcher-macos-amd64` or `hyfetcher-macos-arm64`).
+3. Grant execute permission if needed:
+
+    ```sh
+    chmod +x hyfetcher-macos-amd64
+    ```
+
+4. Run in Terminal:
+
+    ```sh
+    ./hyfetcher-macos-amd64 -d data -o outputs -c 8
+    ```
+
+5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
+
+### Linux
+
+1. Go to the [Releases](https://github.com/hyperplasma/hyfetcher/releases) page and download the latest `hyfetcher-linux-amd64.tar.gz`.
+2. Extract it to obtain `hyfetcher-linux-amd64`.
+3. Grant execute permission if needed:
+
+    ```sh
+    chmod +x hyfetcher-linux-amd64
+    ```
+
+4. Run in Terminal:
+
+    ```sh
+    ./hyfetcher-linux-amd64 -d data -o outputs -c 8
+    ```
+
+5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
 
 ## Dependencies
 
@@ -56,11 +109,11 @@ hyfetcher/
 - [anyhow](https://crates.io/crates/anyhow)
 - See `Cargo.toml` for details
 
-## Usage
+## Usage from Source
 
-### 1. Build
+### Compilation
 
-Ensure you have the Rust toolchain installed. Then compile in the project directory:
+Make sure you have installed the Rust toolchain. Then, in the project directory, run:
 
 ```sh
 cargo build --release
@@ -68,37 +121,29 @@ cargo build --release
 
 The executable will be located at `target/release/hyfetcher`.
 
-Alternatively, download the executable directly.
+### Running
 
-### 2. Run
-
-Execute in the project root directory:
+In the project root directory, run:
 
 ```sh
 ./target/release/hyfetcher [OPTIONS]
 ```
 
-If you downloaded the executable directly, run in its directory:
+**Available options:**
 
-```sh
-./hyfetcher [OPTIONS]
-```
+- `-d, --data_dir <DATA_DIR>`: Input data directory, default is `data`
+- `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default is `outputs`
+- `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default is 8
 
-**Available Options**:
-
-- `-d, --data_dir <DATA_DIR>`: Input data directory, default: `data`
-- `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default: `outputs`
-- `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default: 8
-
-**Example**:
+**Example:**
 
 ```sh
 ./target/release/hyfetcher -d data -o outputs -c 16
 ```
 
-### 4. Index Page
+### Index Page
 
-The program automatically generates an `index.html` in the output directory, which can be opened directly in a browser for quick access to all downloaded web
+The program will automatically generate `index.html` in the output directory. You can open it directly in your browser to quickly browse all downloaded web pages.
 
 ## License
 

@@ -47,6 +47,59 @@ hyfetcher/
 - 每个网页将保存为本地 HTML，输出目录（如 `outputs/`）中分类层级关系（目录结构结构）保持与输入目录中相同的结构。
 - 图片和视频等资源自动下载到本地 `outputs/assets/` 目录。
 
+## 各平台使用说明
+
+HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均可在 [Releases](https://github.com/hyperplasma/hyfetcher/releases) 页面下载，无需本地编译环境，下载后即可直接运行。
+
+### Windows
+
+1. 前往 [Releases](https://github.com/hyperplasma/hyfetcher/releases) 页面，下载最新版本的 `hyfetcher-windows-amd64.zip`。
+2. 解压后得到 `hyfetcher-windows-amd64.exe`。
+3. 将需要处理的数据目录（如 `data`）和输出目录（如 `outputs`）放在同一目录或指定路径。
+4. 在命令行（cmd 或 PowerShell）中运行：
+
+    ```sh
+    .\hyfetcher-windows-amd64.exe -d data -o outputs -c 8
+    ```
+
+5. 程序结束后，打开 `outputs/index.html` 即可用浏览器查看已下载网页。
+
+### macOS
+
+1. 前往 [Releases](https://github.com/hyperplasma/hyfetcher/releases) 页面，下载最新版本的 `hyfetcher-macos-amd64.tar.gz`（Intel 芯片）或 `hyfetcher-macos-arm64.tar.gz`（Apple 芯片）。
+2. 解压后得到可执行文件（如 `hyfetcher-macos-amd64` 或 `hyfetcher-macos-arm64`）。
+3. 赋予可执行权限（如果需要）：
+
+    ```sh
+    chmod +x hyfetcher-macos-amd64
+    ```
+
+4. 在终端运行：
+
+    ```sh
+    ./hyfetcher-macos-amd64 -d data -o outputs -c 8
+    ```
+
+5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
+
+### Linux
+
+1. 前往 [Releases](https://github.com/hyperplasma/hyfetcher/releases) 页面，下载最新版本的 `hyfetcher-linux-amd64.tar.gz`。
+2. 解压后得到 `hyfetcher-linux-amd64` 可执行文件。
+3. 赋予可执行权限（如果需要）：
+
+    ```sh
+    chmod +x hyfetcher-linux-amd64
+    ```
+
+4. 在终端运行：
+
+    ```sh
+    ./hyfetcher-linux-amd64 -d data -o outputs -c 8
+    ```
+
+5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
+
 ## 依赖
 
 - [tokio](https://crates.io/crates/tokio)
@@ -56,9 +109,9 @@ hyfetcher/
 - [anyhow](https://crates.io/crates/anyhow)
 - 详见 `Cargo.toml`
 
-## 使用方法
+## 源码使用方式
 
-### 1. 编译
+### 编译
 
 请确保你已安装 Rust 工具链。然后在项目目录下编译：
 
@@ -68,20 +121,13 @@ cargo build --release
 
 可执行文件位于 `target/release/hyfetcher`。
 
-或直接下载可执行文件。
 
-### 2. 运行
+### 运行
 
 在项目根目录下执行：
 
 ```sh
 ./target/release/hyfetcher [OPTIONS]
-```
-
-若已直接下载可执行文件，则直接在其目录下执行：
-
-```sh
-./hyfetcher [OPTIONS]
 ```
 
 **可用参数**：
@@ -96,7 +142,7 @@ cargo build --release
 ./target/release/hyfetcher -d data -o outputs -c 16
 ```
 
-### 4. 索引页
+### 索引页
 
 程序会在输出目录下自动生成 `index.html`，可直接用浏览器打开，快速查阅已下载的所有网页。
 
