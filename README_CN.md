@@ -52,7 +52,7 @@ hyfetcher/
 
 ## 可用参数
 
-你可以使用以下命令行参数来配置 HyFetcher：【】
+你可以使用以下命令行参数来配置 HyFetcher：
 
 - `-d, --data_dir <DATA_DIR>`：数据输入目录，默认 `data`
 - `-o, --outputs_dir <OUTPUTS_DIR>`：输出目录，默认 `outputs`
@@ -75,10 +75,9 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 3. 将需要处理的数据目录（如 `data`）和输出目录（如 `outputs`）放在同一目录或指定路径。
 4. 在命令行（cmd 或 PowerShell）中运行：
 
-    ```sh
-    .\hyfetcher-windows-amd64.exe -d data -o outputs
-    ```
-
+   ```sh
+   .\hyfetcher-windows-amd64.exe -d data -o outputs
+   ```
 5. 程序结束后，打开 `outputs/index.html` 即可用浏览器查看已下载网页。
 
 ### macOS
@@ -87,16 +86,14 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 2. 解压后得到可执行文件（如 `hyfetcher-macos-amd64` 或 `hyfetcher-macos-arm64`）。
 3. 赋予可执行权限（如果需要）：
 
-    ```sh
-    chmod +x hyfetcher-macos-amd64
-    ```
-
+   ```sh
+   chmod +x hyfetcher-macos-amd64
+   ```
 4. 在终端运行：
 
-    ```sh
-    ./hyfetcher-macos-amd64 -d data -o outputs
-    ```
-
+   ```sh
+   ./hyfetcher-macos-amd64 -d data -o outputs
+   ```
 5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
 
 ### Linux
@@ -105,16 +102,14 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 2. 解压后得到 `hyfetcher-linux-amd64` 可执行文件。
 3. 赋予可执行权限（如果需要）：
 
-    ```sh
-    chmod +x hyfetcher-linux-amd64
-    ```
-
+   ```sh
+   chmod +x hyfetcher-linux-amd64
+   ```
 4. 在终端运行：
 
-    ```sh
-    ./hyfetcher-linux-amd64 -d data -o outputs
-    ```
-
+   ```sh
+   ./hyfetcher-linux-amd64 -d data -o outputs
+   ```
 5. 程序结束后，用浏览器打开 `outputs/index.html` 浏览所有已下载网页。
 
 ## 依赖
@@ -137,7 +132,6 @@ cargo build --release
 ```
 
 可执行文件位于 `target/release/hyfetcher`。
-
 
 ### 运行
 
