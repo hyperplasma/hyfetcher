@@ -1,91 +1,131 @@
 use crate::model::Post;
-use std::collections::BTreeMap;
-use std::path::Path;
+use std::collections::HashMap;
 
-/// 树形目录节点
-#[derive(Default)]
-pub struct IndexNode {
-    pub children: BTreeMap<String, IndexNode>,
-    pub files: Vec<(String, String, String)>, // (title, rel_path, url)
+/// Tree directory node
+#[derive(Debug)]
+pub struct TreeNode {
+    pub name: String,
+    pub children: HashMap<String, TreeNode>,
+    pub files: Vec<Post>,
 }
 
-pub fn build_index_tree(posts: &[Post]) -> IndexNode {
-    let mut root = IndexNode::default();
+impl TreeNode {
+    pub fn new(name: String) -> Self {
+        Self {
+            name,
+            children: HashMap::new(),
+            files: Vec::new(),
+        }
+    }
+
+    pub fn add_file(&mut self, post: Post) {
+        self.files.push(post);
+    }
+
+    pub fn get_or_create_child(&mut self, name: String) -> &mut TreeNode {
+        self.children.entry(name).or_insert_with(|| TreeNode::new(name))
+    }
+}
+
+pub fn build_index_tree(posts: &[Post]) -> TreeNode {
+    let mut root = TreeNode::new("root".to_string());
 
     for post in posts {
-        let mut node = &mut root;
-        let mut path_parts = vec![post.category.clone()];
+        let mut current = &mut root;
+        
+        // Navigate to the correct directory level
+        if !post.category.is_empty() {
+            current = current.get_or_create_child(post.category.clone());
+        }
+        
         if !post.csv_subdir.is_empty() {
-            path_parts.extend(post.csv_subdir.split('/').map(|s| s.to_string()));
+            for part in post.csv_subdir.split('/') {
+                if !part.is_empty() {
+                    current = current.get_or_create_child(part.to_string());
+                }
+            }
         }
-        if !post.csv_filename.is_empty() {
-            path_parts.push(post.csv_filename.clone());
-        }
-        for part in path_parts {
-            node = node.children.entry(part).or_insert_with(IndexNode::default);
-        }
-        // files 存在于叶子节点
-        node.files.push((
-            post.title.clone(),
-            post.get_rel_save_path(),
-            post.url.clone(),
-        ));
+        
+        // files exist in leaf nodes
+        current.add_file(post.clone());
     }
+
     root
 }
 
-pub fn write_index_html(tree: &IndexNode, outputs_dir: &Path) -> anyhow::Result<()> {
-    use std::fs::File;
-    use std::io::Write;
-    let now_str = chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+pub fn write_index_html(tree: &TreeNode, outputs_dir: &std::path::Path) -> anyhow::Result<()> {
+    let mut html = String::new();
+    html.push_str("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
+    html.push_str("<meta charset=\"UTF-8\">\n");
+    html.push_str("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
+    html.push_str("<title>HyFetcher Index</title>\n");
+    html.push_str("<style>\n");
+    html.push_str("body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }\n");
+    html.push_str(".container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }\n");
+    html.push_str(".header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }\n");
+    html.push_str(".header h1 { margin: 0; font-size: 2.5em; font-weight: 300; }\n");
+    html.push_str(".header p { margin: 10px 0 0; opacity: 0.9; font-size: 1.1em; }\n");
+    html.push_str(".content { padding: 30px; }\n");
+    html.push_str(".category { margin-bottom: 30px; }\n");
+    html.push_str(".category h2 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; margin-bottom: 20px; }\n");
+    html.push_str(".subcategory { margin-bottom: 25px; }\n");
+    html.push_str(".subcategory h3 { color: #555; margin-bottom: 15px; }\n");
+    html.push_str(".file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }\n");
+    html.push_str(".file-item { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; transition: all 0.2s ease; }\n");
+    html.push_str(".file-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-color: #667eea; }\n");
+    html.push_str(".file-item a { color: #333; text-decoration: none; font-weight: 500; display: block; }\n");
+    html.push_str(".file-item a:hover { color: #667eea; }\n");
+    html.push_str(".file-meta { font-size: 0.9em; color: #666; margin-top: 8px; }\n");
+    html.push_str(".empty-message { color: #999; font-style: italic; text-align: center; padding: 20px; }\n");
+    html.push_str("</style>\n");
+    html.push_str("</head>\n<body>\n");
+    html.push_str("<div class=\"container\">\n");
+    html.push_str("<div class=\"header\">\n");
+    html.push_str("<h1>HyFetcher Index</h1>\n");
+    html.push_str("<p>Offline website archive</p>\n");
+    html.push_str("</div>\n");
+    html.push_str("<div class=\"content\">\n");
 
-    fn write_tree(node: &IndexNode, lines: &mut Vec<String>, indent: usize) {
-        for (name, sub) in &node.children {
-            lines.push(format!(
-                "{:indent$}<li><strong>{}</strong>\n{:indent$}<ul>",
-                "", name, "", indent = indent * 2
-            ));
-            write_tree(sub, lines, indent + 1);
-            lines.push(format!("{:indent$}</ul></li>", "", indent = indent * 2));
-        }
-        for (title, rel_path, url) in &node.files {
-            lines.push(format!(
-                "{:indent$}<li><a href=\"{}\">{}</a> (<a href=\"{}\" target=\"_blank\">{}</a>)</li>",
-                "", rel_path, title, url, url, indent = indent * 2
-            ));
+    fn render_node(node: &TreeNode, level: usize, html: &mut String) {
+        for (name, child) in &node.children {
+            if level == 0 {
+                html.push_str(&format!("<div class=\"category\">\n"));
+                html.push_str(&format!("<h2>{}</h2>\n", name));
+            } else {
+                html.push_str(&format!("<div class=\"subcategory\">\n"));
+                html.push_str(&format!("<h3>{}</h3>\n", name));
+            }
+
+            if !child.files.is_empty() {
+                html.push_str("<div class=\"file-list\">\n");
+                for file in &child.files {
+                    let file_path = file.get_rel_save_path();
+                    html.push_str(&format!(
+                        "<div class=\"file-item\">\n<a href=\"{}\">{}</a>\n<div class=\"file-meta\">{}</div>\n</div>\n",
+                        file_path, file.title, file.url
+                    ));
+                }
+                html.push_str("</div>\n");
+            } else if child.children.is_empty() {
+                html.push_str("<div class=\"empty-message\">No files in this category</div>\n");
+            }
+
+            render_node(child, level + 1, html);
+
+            if level == 0 {
+                html.push_str("</div>\n");
+            } else {
+                html.push_str("</div>\n");
+            }
         }
     }
 
-    let mut lines = vec![
-        "<!DOCTYPE html>".to_string(),
-        "<html lang=\"zh-CN\">".to_string(),
-        "<head>".to_string(),
-        "<meta charset=\"UTF-8\">".to_string(),
-        "<title>Hyplus Index - Hyplusite Exporter</title>".to_string(),
-        "<meta name=\"author\" content=\"Akira37-hyperplasma\">".to_string(),
-        format!("<meta name=\"generated\" content=\"{}\">", now_str),
-        "<style>".to_string(),
-        "body{font-family:system-ui,-apple-system,sans-serif;line-height:1.4;max-width:800px;margin:30px auto;padding:0 20px;color:#24292e}".to_string(),
-        "ul{margin:0 0 0 1.5em;padding:0;}".to_string(),
-        "li{margin:.2em 0;}".to_string(),
-        "strong{color:#24292e;font-size:1.1em;}".to_string(),
-        "a{color:#0366d6;text-decoration:none;}".to_string(),
-        "a:hover{text-decoration:underline;}".to_string(),
-        ".meta{color:#666;font-size:0.9em;margin-bottom:20px;}".to_string(),
-        "</style>".to_string(),
-        "</head>".to_string(),
-        "<body>".to_string(),
-        "<h1>Hyplus Index</h1>".to_string(),
-        format!("<p class=\"meta\">Generated by Hyplusite Exporter on {}.<br>Enjoy your reading experience at any time!</p>", now_str),
-        "<ul>".to_string(),
-    ];
-    write_tree(tree, &mut lines, 1);
-    lines.extend(vec!["</ul>".to_string(), "</body>".to_string(), "</html>".to_string()]);
+    render_node(tree, 0, &mut html);
 
-    let index_path = outputs_dir.join("index.html");
-    let mut file = File::create(index_path)?;
-    for line in lines {
-        writeln!(file, "{}", line)?;
-    }
+    html.push_str("</div>\n");
+    html.push_str("</div>\n");
+    html.push_str("</body>\n</html>");
+
+    std::fs::write(outputs_dir.join("index.html"), html)?;
     Ok(())
 }

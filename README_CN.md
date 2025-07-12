@@ -9,6 +9,7 @@
 - 🗂️ 自动生成可浏览的索引页
 - 🛠️ 命令行参数自由指定数据目录、输出目录、并发数等
 - 📦 简洁易用，适合个人知识管理、网页归档等场景
+- 🔧 自动检测和安装外部工具（yt-dlp）
 
 ## 数据与目录格式
 
@@ -57,6 +58,7 @@ hyfetcher/
 - `-d, --data_dir <DATA_DIR>`：数据输入目录，默认 `data`
 - `-o, --outputs_dir <OUTPUTS_DIR>`：输出目录，默认 `outputs`
 - `-c, --concurrency <CONCURRENCY>`：并发任务数，默认 8
+- `--skip-tool-check`：跳过外部工具检测和安装
 
 示例：
 
@@ -114,12 +116,24 @@ HyFetcher 提供了适用于 Windows、macOS 和 Linux 的可执行文件，均�
 
 ## 依赖
 
-- [tokio](https://crates.io/crates/tokio)
-- [reqwest](https://crates.io/crates/reqwest)
-- [scraper](https://crates.io/crates/scraper)
-- [clap](https://crates.io/crates/clap)
-- [anyhow](https://crates.io/crates/anyhow)
+### Rust Crates
+- [tokio](https://crates.io/crates/tokio) - 异步运行时
+- [reqwest](https://crates.io/crates/reqwest) - HTTP 客户端
+- [scraper](https://crates.io/crates/scraper) - HTML 解析
+- [clap](https://crates.io/crates/clap) - 命令行参数解析
+- [anyhow](https://crates.io/crates/anyhow) - 错误处理
+- [url](https://crates.io/crates/url) - URL 解析
+- [futures](https://crates.io/crates/futures) - 异步工具
+- [env_logger](https://crates.io/crates/env_logger) - 日志记录
 - 详见 `Cargo.toml`
+
+### 外部工具
+- **yt-dlp**：用于下载 Bilibili 等平台的视频。程序会自动检测并安装此工具（如果未找到）。
+  - **Windows**：从 GitHub releases 下载可执行文件
+  - **macOS**：通过 `pip3 install --user yt-dlp` 安装
+  - **Linux**：从 GitHub releases 下载二进制文件
+
+程序会在首次运行时自动处理外部工具安装。如需跳过此功能，可使用 `--skip-tool-check` 参数。
 
 ## 源码使用方式
 

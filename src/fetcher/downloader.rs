@@ -1,47 +1,37 @@
 use crate::model::Post;
-use reqwest::Client;
-use std::path::Path;
-use std::fs;
 use crate::fetcher::image::process_images;
 use crate::fetcher::video::process_videos;
+use reqwest::Client;
+use std::path::Path;
+use tokio::fs;
+use anyhow::Result;
 
-/// 下载网页并处理本地化资源（图片、视频）
+/// Download web page and process localized resources (images, videos)
 pub async fn download_and_save_post(
     post: &Post,
     outputs_dir: &Path,
     client: &Client,
-) -> anyhow::Result<()> {
-    let url = &post.url;
-    let html_path = outputs_dir.join(post.get_rel_save_path());
-
-    if html_path.exists() {
-        println!("Exists, skip: {}", html_path.display());
-        return Ok(());
-    }
-    if let Some(parent) = html_path.parent() {
-        fs::create_dir_all(parent)?;
+) -> Result<()> {
+    let response = client.get(&post.url).send().await?;
+    let html = response.text().await?;
+    
+    // Get the actual directory of the HTML file (for images storage)
+    let html_file_dir = outputs_dir.join(post.get_rel_save_path()).parent().unwrap().to_path_buf();
+    fs::create_dir_all(&html_file_dir).await?;
+    
+    // Localize images
+    let html_with_images = process_images(&html, &post.url, &html_file_dir, client).await?;
+    
+    // Localize videos
+    let html_with_videos = process_videos(&html_with_images, &post.url, &html_file_dir, client).await?;
+    
+    let output_path = outputs_dir.join(post.get_rel_save_path());
+    if let Some(parent) = output_path.parent() {
+        fs::create_dir_all(parent).await?;
     }
     
-    println!("Downloading: {}", url);
-    let resp = client.get(url).send().await?;
+    fs::write(&output_path, html_with_videos).await?;
+    println!("Downloaded: {}", post.title);
     
-    if !resp.status().is_success() {
-        return Err(anyhow::anyhow!("HTTP error: {} for URL: {}", resp.status(), url));
-    }
-    
-    let mut content = resp.text().await?;
-    println!("Downloaded {} bytes from {}", content.len(), url);
-
-    // 获取 HTML 文件实际目录（用于 images 存放）
-    let html_dir = html_path.parent().unwrap_or(outputs_dir);
-
-    // 图片本地化
-    content = process_images(&content, url, html_dir, client).await?;
-
-    // 视频本地化
-    content = process_videos(&content, url, html_dir, client).await?;
-
-    fs::write(&html_path, content)?;
-    println!("Downloaded: {} -> {}", url, html_path.display());
     Ok(())
 }

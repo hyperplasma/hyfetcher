@@ -2,7 +2,7 @@
 name = "hyfetcher"
 version = "0.1.0"
 edition = "2024"
-authors = ["LoongBeta <your_email@example.com>"]
+authors = ["Hyperplasma"]
 description = "A high-performance, extensible offline website/article downloader and indexer, inspired by Python version."
 license = "MIT"
 repository = "https://github.com/hyperplasma/hyfetcher"

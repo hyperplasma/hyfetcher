@@ -29,7 +29,7 @@ impl Post {
         }
     }
 
-    /// 返回输出html文件路径（不含outputs/前缀）
+    /// Returns the output html file path (without outputs/ prefix)
     pub fn get_rel_save_path(&self) -> String {
         let mut parts = vec![self.category.clone()];
         if !self.csv_subdir.is_empty() {
@@ -43,7 +43,7 @@ impl Post {
     }
 }
 
-/// 替换非法文件名字符
+/// Replace illegal filename characters
 pub fn sanitize_filename(s: &str) -> String {
     let re = regex::Regex::new(r#"[<>:"/\\|?*]"#).unwrap();
     re.replace_all(s, "_").to_string()

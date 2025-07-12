@@ -4,11 +4,11 @@ use url::Url;
 use std::path::Path;
 use tokio::io::AsyncWriteExt;
 
-/// 处理HTML中的所有图片，将其下载到本地，并替换HTML中的src指向本地文件
+/// Process all images in HTML, download them locally, and replace HTML src to point to local files
 pub async fn process_images(
     html: &str,
     page_url: &str,
-    html_file_dir: &Path,  // 新参数，传入HTML文件所在目录
+    html_file_dir: &Path,  // pass in the directory where the HTML file is located
     client: &Client,
 ) -> anyhow::Result<String> {
     let base_url = Url::parse(page_url).ok();
@@ -28,16 +28,16 @@ pub async fn process_images(
                     src.to_string()
                 };
 
-                // 获取文件名
+                // Get filename
                 let filename = img_url.split('/').last().and_then(|f| {
                     if f.is_empty() { None } else { Some(f) }
                 }).unwrap_or("image.jpg");
 
-                // 图片存于 html_file_dir/images/filename
+                // Images stored in html_file_dir/images/filename
                 let local_img_dir = html_file_dir.join("images");
                 let local_path = local_img_dir.join(filename);
 
-                // 并发下载
+                // Concurrent download
                 if !local_path.exists() {
                     if let Some(parent) = local_path.parent() {
                         std::fs::create_dir_all(parent)?;
@@ -56,14 +56,14 @@ pub async fn process_images(
                     }
                 }
 
-                // HTML中用相对路径替换（与html文件同级的images/filename）
+                // Replace with relative path in HTML (images/filename at the same level as html file)
                 let rel_path = format!("images/{}", filename);
                 replacements.push((src.to_string(), rel_path));
             }
         }
     }
 
-    // 批量替换
+    // Batch replacement
     let mut result = html.to_string();
     for (from, to) in replacements {
         result = result.replace(&format!("src=\"{}\"", from), &format!("src=\"{}\"", to));

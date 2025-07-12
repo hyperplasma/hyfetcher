@@ -9,6 +9,7 @@
 - 🗂️ Automatically generates a browsable index page
 - 🛠️ Flexible command-line arguments to specify data directory, output directory, concurrency, etc.
 - 📦 Simple and easy to use, suitable for personal knowledge management, web archiving, and similar scenarios
+- 🔧 Automatic external tool detection and installation
 
 ## Data and Directory Structure
 
@@ -57,6 +58,7 @@ You can use the following command-line options to configure HyFetcher:
 - `-d, --data_dir <DATA_DIR>`: Input data directory, default is `data`
 - `-o, --outputs_dir <OUTPUTS_DIR>`: Output directory, default is `outputs`
 - `-c, --concurrency <CONCURRENCY>`: Number of concurrent tasks, default is 8
+- `--skip-tool-check`: Skip external tool detection and installation
 
 Example:
 
@@ -75,10 +77,9 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 3. Place your data directory (such as `data`) and output directory (such as `outputs`) in the same directory or specify their paths.
 4. In the command line (cmd or PowerShell), run:
 
-    ```sh
-    .\hyfetcher-windows-amd64.exe -d data -o outputs
-    ```
-
+   ```sh
+   .\hyfetcher-windows-amd64.exe -d data -o outputs
+   ```
 5. After the program finishes, open `outputs/index.html` in your browser to view the downloaded web pages.
 
 ### macOS
@@ -87,16 +88,14 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 2. Extract it to obtain the executable (such as `hyfetcher-macos-amd64` or `hyfetcher-macos-arm64`).
 3. Grant execute permission if needed:
 
-    ```sh
-    chmod +x hyfetcher-macos-amd64
-    ```
-
+   ```sh
+   chmod +x hyfetcher-macos-amd64
+   ```
 4. Run in Terminal:
 
-    ```sh
-    ./hyfetcher-macos-amd64 -d data -o outputs
-    ```
-
+   ```sh
+   ./hyfetcher-macos-amd64 -d data -o outputs
+   ```
 5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
 
 ### Linux
@@ -105,26 +104,36 @@ HyFetcher provides pre-built executables for Windows, macOS, and Linux. You can 
 2. Extract it to obtain `hyfetcher-linux-amd64`.
 3. Grant execute permission if needed:
 
-    ```sh
-    chmod +x hyfetcher-linux-amd64
-    ```
-
+   ```sh
+   chmod +x hyfetcher-linux-amd64
+   ```
 4. Run in Terminal:
 
-    ```sh
-    ./hyfetcher-linux-amd64 -d data -o outputs
-    ```
-
+   ```sh
+   ./hyfetcher-linux-amd64 -d data -o outputs
+   ```
 5. After the program finishes, open `outputs/index.html` in your browser to view all downloaded web pages.
 
 ## Dependencies
 
-- [tokio](https://crates.io/crates/tokio)
-- [reqwest](https://crates.io/crates/reqwest)
-- [scraper](https://crates.io/crates/scraper)
-- [clap](https://crates.io/crates/clap)
-- [anyhow](https://crates.io/crates/anyhow)
-- See `Cargo.toml` for details
+### Rust Crates
+- [tokio](https://crates.io/crates/tokio) - Async runtime
+- [reqwest](https://crates.io/crates/reqwest) - HTTP client
+- [scraper](https://crates.io/crates/scraper) - HTML parsing
+- [clap](https://crates.io/crates/clap) - Command line argument parsing
+- [anyhow](https://crates.io/crates/anyhow) - Error handling
+- [url](https://crates.io/crates/url) - URL parsing
+- [futures](https://crates.io/crates/futures) - Async utilities
+- [env_logger](https://crates.io/crates/env_logger) - Logging
+- See `Cargo.toml` for complete list
+
+### External Tools
+- **yt-dlp**: Required for downloading videos from platforms like Bilibili. The program will automatically detect and install this tool if not found.
+  - **Windows**: Downloaded as executable from GitHub releases
+  - **macOS**: Installed via `pip3 install --user yt-dlp`
+  - **Linux**: Downloaded as binary from GitHub releases
+
+The program automatically handles external tool installation on first run. You can use `--skip-tool-check` to bypass this feature if needed.
 
 ## Usage from Source
 
