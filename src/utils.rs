@@ -124,11 +124,14 @@ pub async fn install_yt_dlp() -> Result<()> {
             println!("Downloading yt-dlp...");
             download_file(url, &yt_dlp_path).await?;
             
-            // Set execution permissions
-            use std::os::unix::fs::PermissionsExt;
-            let mut perms = fs::metadata(&yt_dlp_path)?.permissions();
-            perms.set_mode(0o755);
-            fs::set_permissions(&yt_dlp_path, perms)?;
+            // Set execution permissions (Unix-specific)
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                let mut perms = fs::metadata(&yt_dlp_path)?.permissions();
+                perms.set_mode(0o755);
+                fs::set_permissions(&yt_dlp_path, perms)?;
+            }
             
             println!("yt-dlp installation completed: {}", yt_dlp_path.display());
         },
