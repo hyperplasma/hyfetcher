@@ -21,8 +21,16 @@ pub async fn download_and_save_post(
     if let Some(parent) = html_path.parent() {
         fs::create_dir_all(parent)?;
     }
+    
+    println!("Downloading: {}", url);
     let resp = client.get(url).send().await?;
+    
+    if !resp.status().is_success() {
+        return Err(anyhow::anyhow!("HTTP error: {} for URL: {}", resp.status(), url));
+    }
+    
     let mut content = resp.text().await?;
+    println!("Downloaded {} bytes from {}", content.len(), url);
 
     // 获取 HTML 文件实际目录（用于 images 存放）
     let html_dir = html_path.parent().unwrap_or(outputs_dir);

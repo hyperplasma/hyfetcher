@@ -1,11 +1,13 @@
 mod model;
 mod parser;
 mod fetcher;
+mod utils;
 
 use parser::csv_parser::parse_posts;
 use parser::index_builder::{build_index_tree, write_index_html};
 use fetcher::downloader::download_and_save_post;
 use std::path::PathBuf;
+use utils::check_and_install_tools;
 
 use clap::Parser;
 
@@ -23,15 +25,27 @@ struct Args {
     /// Output directory
     #[arg(short = 'o', long, default_value = "outputs")]
     outputs_dir: String,
-    /// 并发任务数
+    /// Number of concurrent tasks
     #[arg(short = 'c', long, default_value_t = 8)]
     concurrency: usize,
+    /// Skip tool check
+    #[arg(long)]
+    skip_tool_check: bool,
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     env_logger::init();
     let args = Args::parse();
+
+    // Check and install required tools
+    if !args.skip_tool_check {
+        if let Err(e) = check_and_install_tools().await {
+            eprintln!("Tool check failed: {}", e);
+            eprintln!("You can use --skip-tool-check to skip tool checking");
+            return Err(e);
+        }
+    }
 
     let data_dir = PathBuf::from(&args.data_dir);
     let outputs_dir = PathBuf::from(&args.outputs_dir);
@@ -40,7 +54,7 @@ async fn main() -> anyhow::Result<()> {
     let posts = parse_posts(&data_dir);
     println!("Found {} posts.", posts.len());
 
-    // 多线程并发下载
+    // Multi-threaded concurrent downloading
     let client = reqwest::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; RustDownloader/1.0)")
         .build()?;
@@ -67,7 +81,7 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-    // 生成index.html
+    // Generate index.html
     let tree = build_index_tree(&posts);
     write_index_html(&tree, &outputs_dir)?;
 
