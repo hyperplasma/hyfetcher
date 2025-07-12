@@ -23,7 +23,7 @@ impl TreeNode {
     }
 
     pub fn get_or_create_child(&mut self, name: String) -> &mut TreeNode {
-        self.children.entry(name).or_insert_with(|| TreeNode::new(name))
+        self.children.entry(name.clone()).or_insert_with(|| TreeNode::new(name))
     }
 }
 
